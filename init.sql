@@ -1,0 +1,23 @@
+CREATE USER myuser WITH PASSWORD 'mypassword';
+
+CREATE DATABASE mydb_dev;
+CREATE DATABASE mydb_test;
+
+\c mydb_dev;
+CREATE TABLE statesave(
+stateid SERIAL NOT NULL PRIMARY KEY,
+ts_utc TIMESTAMP NOT NULL,
+statejson JSON NOT NULL
+);
+GRANT ALL ON ALL TABLES IN SCHEMA "public" TO myuser;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA "public" TO myuser;
+
+
+\c mydb_test;
+CREATE TABLE statesave(
+stateid SERIAL NOT NULL PRIMARY KEY,
+ts_utc TIMESTAMP NOT NULL,
+statejson JSON NOT NULL
+);
+GRANT ALL ON ALL TABLES IN SCHEMA "public" TO myuser;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA "public" TO myuser;

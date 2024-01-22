@@ -1,0 +1,29 @@
+General
+=======
+
+
+Docker Setup
+============
+    * Use node user instead of root (RB)
+    * reduce node packages to a minimum (in package.json) (RB)
+    * use specific process for startup instead of npm start (RB)
+    * check that the WATCHPACK_POLLING=true workaround for Windows in package.json works for Mac as well (CSC)
+
+Database
+========
+
+
+Backend
+=======
+    * error handling: always throws 500. The api_error is not caught by inherits("api_error", err)
+    * R: why is.numeric("9") = FALSE in checkNumber(...)?
+    * jsonlite: unboxing does not work for retrieving saved state in savedState(...)
+
+
+Frontend
+========
+
+
+
+Done
+====

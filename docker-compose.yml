@@ -1,0 +1,75 @@
+###
+## for local dev, wait for db to pass healthcheck before we start node
+###
+
+# version key is DEPRECATED
+# v2 and v3 features now combined in compose CLI
+
+services:
+  postgres_db:
+    build:
+      dockerfile: ./Dockerfile_postgres
+      context: .
+    container_name: postgres_db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - my_network
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      dockerfile: ./Dockerfile_frontend
+      context: .
+    container_name: frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - "/app/node_modules"
+    networks:
+      - my_network
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    command: ["npm", "start"]
+
+  backend:
+    build:
+      dockerfile: Dockerfile_backend
+      context: .
+    container_name: backend
+    volumes:
+      - ./backend:/app
+    networks:
+      - my_network
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://backend:8080/health-check/"]
+      interval: 120s
+      timeout: 10s
+      retries: 2
+
+volumes:
+  postgres_db:
+    driver: local
+
+networks:
+  my_network:
+    driver: bridge
