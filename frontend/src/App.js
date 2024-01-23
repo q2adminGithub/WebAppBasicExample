@@ -1,11 +1,17 @@
 import { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Plot from 'react-plotly.js';
 
 function App2() {
   const [input, setInput] = useState('');
   const [result, setResult] = useState('');
   const [savedstates, setSavedstates] = useState([]);
+  const [ndraws, setNdraws] = useState('');
+  const [mean, setMean] = useState('');
+  const [sd, setSd] = useState('');
+  const [rawdata, setRawData] = useState([]);
+
+
 
   const getSavedStates = async () => {
     fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'})
@@ -136,6 +142,35 @@ function App2() {
       });
   }
 
+  const getHistogram = async () => {
+    fetch(`http://127.0.0.1:8080/square/hist-raw?ndraws=${parseInt(ndraws)}&mean=${parseFloat(mean)}&sd=${parseFloat(sd)}`, { method: 'GET' })
+    .then(response => {
+      if (!response.ok) {
+        setResult('Invalid input value ... nothing returned');
+        throw new Error('getHistogram network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Check if 'data' is an array and has the expected structure
+      if (Array.isArray(data) && data.length > 0 && data[0].hasOwnProperty('mids') && data[0].hasOwnProperty('counts')) {
+        setRawData([
+          {
+            y: data.map(x => x["counts"]),
+            x: data.map(x => x["mids"]),
+            type: 'bar'
+          }
+        ]);
+      } else {
+        setResult('Invalid data format received from the server');
+      }
+    })
+    .catch(error => {
+      console.error('getHistogram error:', error);
+    });
+    console.log("The response data is ", {rawdata})
+  }
+
 
   const savedStatesOutput = [];
   for (let i=0; i<savedstates.length; i++) savedStatesOutput.push(
@@ -145,6 +180,7 @@ function App2() {
       </li>
       );
 
+  
   return (
     <>
       <input type="number" value={input} onChange={(e) => setInput(e.target.value)} />
@@ -155,8 +191,29 @@ function App2() {
       <ul>
         {savedStatesOutput}
       </ul>
+      <p>Enter ndraws, mean and standard deviation:</p>
+      <input type="number" value={ndraws} onChange={(e) => setNdraws(e.target.value)} />
+      <input type="number" value={mean} onChange={(e) => setMean(e.target.value)} />
+      <input type="number" value={sd} onChange={(e) => setSd(e.target.value)} />
+      <button onClick={getHistogram}>Fetch Histogram</button>
+      <Plot
+                data={rawdata}
+                layout={{
+                  title: 'Histogram for normal distribution',
+                  bargap: 0.01,
+                  autosize: true,
+                  xaxis: {
+                    title: 'x'
+                  },
+                  yaxis: {
+                    title: 'Frequency'
+                  },
+                  useResizeHandler: true,
+                  responsive: true
+                }}
+      />
     </>
-  );
-}
+    );
+ }
 
  export default App2;

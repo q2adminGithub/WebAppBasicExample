@@ -1,0 +1,69 @@
+INFO [2024-01-23 13:51:02] plumber API started
+INFO [2024-01-23 13:51:03] mounting endpoints in: ./routes/health-check.R
+INFO [2024-01-23 13:51:03] mounting endpoints in: ./routes/square.R
+INFO [2024-01-23 13:51:13] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET /__docs__/ 200 0.088
+INFO [2024-01-23 13:51:13] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET /openapi.json 200 0.162
+INFO [2024-01-23 13:51:30] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET /square/hist-raw 200 0.061
+INFO [2024-01-23 13:52:42] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET /square/NaN 404 0.003
+INFO [2024-01-23 13:52:47] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET /square/4 200 0.005
+INFO [2024-01-23 13:52:49] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET /square/4/true 200 0.064
+INFO [2024-01-23 13:52:49] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET /square/savedstates 200 0.051
+INFO [2024-01-23 13:53:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.002
+INFO [2024-01-23 13:55:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.004
+INFO [2024-01-23 13:57:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.001
+INFO [2024-01-23 13:59:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.004
+INFO [2024-01-23 14:01:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.002
+INFO [2024-01-23 14:03:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.004
+INFO [2024-01-23 14:05:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
+INFO [2024-01-23 14:05:54] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET //square/hist-raw 404 0.015
+INFO [2024-01-23 14:05:54] 172.26.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 127.0.0.1:8080 GET /favicon.ico 404 0.006
+INFO [2024-01-23 14:07:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
+INFO [2024-01-23 14:09:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.004
+INFO [2024-01-23 14:11:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
+INFO [2024-01-23 14:13:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.012
+INFO [2024-01-23 14:15:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.004
+INFO [2024-01-23 14:17:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.004
+INFO [2024-01-23 14:19:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.005
+INFO [2024-01-23 14:21:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
+INFO [2024-01-23 14:23:01] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
+INFO [2024-01-23 14:25:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
+INFO [2024-01-23 14:27:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.004
+INFO [2024-01-23 14:29:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.004
+INFO [2024-01-23 14:31:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 14:33:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 14:35:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 14:37:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.007
+INFO [2024-01-23 14:39:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 14:41:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 14:43:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 14:45:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.012
+INFO [2024-01-23 14:47:02] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 14:49:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 14:51:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 14:53:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.007
+INFO [2024-01-23 14:55:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 14:57:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 14:59:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:01:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 15:03:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.007
+INFO [2024-01-23 15:05:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:07:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.012
+INFO [2024-01-23 15:09:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:11:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:13:03] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:15:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:17:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:19:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:21:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 15:23:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 15:25:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-23 15:27:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:29:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.2
+INFO [2024-01-23 15:31:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.011
+INFO [2024-01-23 15:33:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.01
+INFO [2024-01-23 15:35:04] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
+INFO [2024-01-23 15:37:05] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.01
+INFO [2024-01-23 15:39:05] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.013
+INFO [2024-01-23 15:41:05] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.012
+INFO [2024-01-23 15:43:05] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.012
+INFO [2024-01-23 15:45:05] 172.26.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.011

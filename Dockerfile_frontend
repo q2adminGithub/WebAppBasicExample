@@ -13,5 +13,8 @@ COPY ./frontend/package.json ./frontend/package-lock.json /app/
 # RUN yarn install
 RUN npm install --silent
 
+# Install specific modules
+RUN npm install react-plotly.js plotly.js 
+
 # Copy the rest of the application files.
 COPY ./frontend .
