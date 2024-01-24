@@ -48,3 +48,4 @@ INFO [2024-01-24 17:10:16] 172.18.0.1 "Mozilla/5.0 (Windows NT 10.0; Win64; x64)
 INFO [2024-01-24 17:10:29] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
 INFO [2024-01-24 17:12:29] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
 INFO [2024-01-24 17:14:29] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.008
+INFO [2024-01-24 17:16:29] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.009
