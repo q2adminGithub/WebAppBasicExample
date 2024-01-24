@@ -18,3 +18,7 @@ INFO [2024-01-23 17:03:09] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-che
 INFO [2024-01-23 17:05:09] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
 INFO [2024-01-23 17:07:09] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.002
 INFO [2024-01-23 17:09:09] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.002
+INFO [2024-01-23 17:11:09] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
+INFO [2024-01-23 17:13:09] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.002
+INFO [2024-01-23 17:15:10] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.003
+INFO [2024-01-23 17:17:10] 172.18.0.3 "curl/7.81.0" backend:8080 GET /health-check/ 200 0.002

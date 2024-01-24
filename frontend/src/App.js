@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import './App.css';
 import Plot from 'react-plotly.js';
+import React from 'react';
+import { PrimaryButton } from '@fluentui/react';
+import { TextField} from '@fluentui/react/lib/TextField';
 
-function App2() {
+
+
+function App() {
   const [input, setInput] = useState('');
   const [result, setResult] = useState('');
   const [savedstates, setSavedstates] = useState([]);
@@ -175,45 +180,57 @@ function App2() {
   const savedStatesOutput = [];
   for (let i=0; i<savedstates.length; i++) savedStatesOutput.push(
       <li key={savedstates[i].stateid}>{savedstates[i].ts_utc} {'  '} 
-      <button onClick={() =>{loadState(savedstates[i].stateid)}}>Load State</button>
-      <button onClick={() =>{deleteState(savedstates[i].stateid)}}>Delete State</button>
+      <PrimaryButton onClick={() =>{loadState(savedstates[i].stateid)}}>Load State</PrimaryButton>
+      <PrimaryButton onClick={() =>{deleteState(savedstates[i].stateid)}}>Delete State</PrimaryButton>
       </li>
       );
 
   
   return (
     <>
-      <input type="number" value={input} onChange={(e) => setInput(e.target.value)} />
-      <button onClick={calculateSquare}>Calculate Square</button>
-      <p>Result: {result}</p>
-      <button onClick={saveState}>Save State</button>
-      <p>Saved States:</p>
-      <ul>
-        {savedStatesOutput}
-      </ul>
-      <p>Enter ndraws, mean and standard deviation:</p>
-      <input type="number" value={ndraws} onChange={(e) => setNdraws(e.target.value)} />
-      <input type="number" value={mean} onChange={(e) => setMean(e.target.value)} />
-      <input type="number" value={sd} onChange={(e) => setSd(e.target.value)} />
-      <button onClick={getHistogram}>Fetch Histogram</button>
-      <Plot
-                data={rawdata}
-                layout={{
-                  title: 'Histogram for normal distribution',
-                  bargap: 0.01,
-                  autosize: true,
-                  xaxis: {
-                    title: 'x'
-                  },
-                  yaxis: {
-                    title: 'Frequency'
-                  },
-                  useResizeHandler: true,
-                  responsive: true
-                }}
-      />
+     <div className="split-container">
+      <div className="left-side">
+        {/* Content for the left side */}
+        <h3>Demo 1: Calculation of square in backend and storing of input</h3>
+        <p>Enter number and press Calculate Square (optionally Save State)!:</p>
+        <TextField label="Number to be squared" placeholder="Please enter number to be squared here" value={input} onChange={(e) => setInput(e.target.value)} />
+        
+        <PrimaryButton onClick={calculateSquare}>Calculate Square</PrimaryButton>
+        <p>Result: {result}</p>
+        <PrimaryButton onClick={saveState}>Save State</PrimaryButton>
+        <p>Saved States:</p>
+        <ul>
+          {savedStatesOutput}
+        </ul>
+      </div>
+      <div className="right-side">
+        {/* Content for the right side */}
+        <h3>Demo 2: Simulation of normally distributed random variables in backend</h3>
+        <p>Enter ndraws, mean and standard deviation and press Fetch Histogram!:</p>
+          <TextField label="Ndraws" placeholder="Please enter number of draws here" type="number" value={ndraws} onChange={(e) => setNdraws(e.target.value)} />
+          <TextField label="Mean" placeholder="Please enter mean of simulated random variable here" type="number" value={mean} onChange={(e) => setMean(e.target.value)}/>
+          <TextField label="StdDev" placeholder="Please enter standard deviation of simulated random variable here" type="number" value={sd} onChange={(e) => setSd(e.target.value)} />
+          <PrimaryButton onClick={getHistogram}>Fetch Histogram</PrimaryButton>
+          <Plot
+                    data={rawdata}
+                    layout={{
+                      title: 'Histogram for normal distribution',
+                      bargap: 0.01,
+                      autosize: true,
+                      xaxis: {
+                        title: 'x'
+                      },
+                      yaxis: {
+                        title: 'Frequency'
+                      },
+                      useResizeHandler: true,
+                      responsive: true
+                    }}
+          />
+      </div>
+     </div>
     </>
     );
  }
 
- export default App2;
+ export default App;
