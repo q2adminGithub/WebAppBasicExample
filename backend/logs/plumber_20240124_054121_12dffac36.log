@@ -1,3 +1,0 @@
-INFO [2024-01-24 05:41:21] plumber API started
-INFO [2024-01-24 05:41:22] mounting endpoints in: ./routes/health-check.R
-INFO [2024-01-24 05:41:22] mounting endpoints in: ./routes/square.R
