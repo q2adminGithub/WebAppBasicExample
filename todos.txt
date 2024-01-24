@@ -22,7 +22,8 @@ Backend
 
 Frontend
 ========
-
+    * spinner and blocked input/fetch histogram button until result from backend is received
+    * convert UTC timestamp to local time
 
 
 Done

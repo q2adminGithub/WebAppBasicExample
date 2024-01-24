@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import Plot from 'react-plotly.js';
 import React from 'react';
-import { PrimaryButton } from '@fluentui/react';
+import { PrimaryButton, DefaultButton } from '@fluentui/react';
 import { TextField} from '@fluentui/react/lib/TextField';
 
 
@@ -179,9 +179,9 @@ function App() {
 
   const savedStatesOutput = [];
   for (let i=0; i<savedstates.length; i++) savedStatesOutput.push(
-      <li key={savedstates[i].stateid}>{savedstates[i].ts_utc} {'  '} 
+      <li key={savedstates[i].stateid}>{savedstates[i].ts_utc + " UTC"} {'  '} 
       <PrimaryButton onClick={() =>{loadState(savedstates[i].stateid)}}>Load State</PrimaryButton>
-      <PrimaryButton onClick={() =>{deleteState(savedstates[i].stateid)}}>Delete State</PrimaryButton>
+      <DefaultButton onClick={() =>{deleteState(savedstates[i].stateid)}}>Delete State</DefaultButton>
       </li>
       );
 
