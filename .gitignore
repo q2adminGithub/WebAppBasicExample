@@ -1,2 +1,2 @@
-./backend/logs
-./frontend/node_modules
+*.log
+frontend/node_modules/
