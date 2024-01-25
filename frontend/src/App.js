@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import Plot from 'react-plotly.js';
 import React from 'react';
-import { PrimaryButton, DefaultButton } from '@fluentui/react';
+import { PrimaryButton, DefaultButton, Spinner } from '@fluentui/react';
 import { TextField} from '@fluentui/react/lib/TextField';
 
 
@@ -15,6 +15,7 @@ function App() {
   const [mean, setMean] = useState('');
   const [sd, setSd] = useState('');
   const [rawdata, setRawData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
 
 
@@ -148,6 +149,7 @@ function App() {
   }
 
   const getHistogram = async () => {
+    setIsLoading(true);
     fetch(`http://127.0.0.1:8080/square/hist-raw?ndraws=${parseInt(ndraws)}&mean=${parseFloat(mean)}&sd=${parseFloat(sd)}`, { method: 'GET' })
     .then(response => {
       if (!response.ok) {
@@ -169,10 +171,13 @@ function App() {
       } else {
         setResult('Invalid data format received from the server');
       }
+      setIsLoading(false);
     })
     .catch(error => {
       console.error('getHistogram error:', error);
+      setIsLoading(false);
     });
+    
     console.log("The response data is ", {rawdata})
   }
 
@@ -210,8 +215,9 @@ function App() {
           <TextField label="Ndraws" placeholder="Please enter number of draws here" type="number" value={ndraws} onChange={(e) => setNdraws(e.target.value)} />
           <TextField label="Mean" placeholder="Please enter mean of simulated random variable here" type="number" value={mean} onChange={(e) => setMean(e.target.value)}/>
           <TextField label="StdDev" placeholder="Please enter standard deviation of simulated random variable here" type="number" value={sd} onChange={(e) => setSd(e.target.value)} />
-          <PrimaryButton onClick={getHistogram}>Fetch Histogram</PrimaryButton>
-          <Plot
+          <PrimaryButton onClick={getHistogram} disabled={isLoading}>Fetch Histogram</PrimaryButton>
+          {isLoading ? <Spinner label="Loading ..." /> : 
+            <Plot
                     data={rawdata}
                     layout={{
                       title: 'Histogram for normal distribution',
@@ -226,7 +232,8 @@ function App() {
                       useResizeHandler: true,
                       responsive: true
                     }}
-          />
+            />
+          }
       </div>
      </div>
     </>
