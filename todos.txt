@@ -22,10 +22,10 @@ Backend
 
 Frontend
 ========
-    * show saved states directly after startup
     * convert UTC timestamp to local time
 
 
 Done
 ====
     * spinner and blocked input/fetch histogram button until result from backend is received
+    * show saved states directly after startup (with useEffect() but this calls the API twice)

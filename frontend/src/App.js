@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Plot from 'react-plotly.js';
 import React from 'react';
@@ -17,29 +17,27 @@ function App() {
   const [rawdata, setRawData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-
-
-  const getSavedStates = async () => {
-    fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'})
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(retrieved => {
-        console.log('getsSavedStates', retrieved.states);
-        retrieved.states.forEach(function (item, index) {
-          console.log("TEST", item, index);
+  useEffect(() => {
+    const getSavedStates = async () => {
+      fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'})
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(retrieved => {
+          console.log('initial', retrieved.states);
+          setSavedstates(retrieved.states)
+          return retrieved.states;
+        })
+        .catch(error => {
+          console.error('initial Error:', error);
         });
-        //setSavedstates(retrieved.states)
-        return retrieved.states;
-      })
-      .catch(error => {
-        console.error('getsSavedStates Error:', error);
-      });
-  }
-  
+    }
+    getSavedStates();
+  }, []);
+
   const calculateSquare = async () => {
     fetch(`http://127.0.0.1:8080/square/${parseInt(input)}`,{method: 'GET'})
       .then(response => {
