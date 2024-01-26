@@ -2,7 +2,7 @@
 
 test_that("GET /health-check : API is running", {
   # Send API request
-  req <- httr::GET(paste0("http://",  HOST), port = PORT, path = "/health-check")
+  req <- httr::GET(paste0("http://127.0.0.1"), port = 8080, path = "/health-check")
   
   # Check response
   expect_equal(req$status_code, 200)

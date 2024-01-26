@@ -36,7 +36,7 @@ CMD ["app.R"]
 
 FROM backendbase as backendtest
 
-RUN Rscript -e "pak::pkg_install('testthat')"
+RUN Rscript -e "pak::pkg_install(c('testthat', 'httr'))"
 # setup workspace
 COPY ./tests/backend /app
 
