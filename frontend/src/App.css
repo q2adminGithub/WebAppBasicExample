@@ -1,6 +1,8 @@
 .App {
   text-align: center;
 }
+
+/* Split the screen */
 .split-container {
   display: flex;
   height: 100vh; /* Set height to full viewport height */
@@ -11,11 +13,18 @@
   overflow: auto; /* Allow content to be scrollable if it overflows */
 }
 
+/* Formatting for left side of screen */
 .left-side {
   padding-left: 30px; /* Adjust the padding as needed */
   padding-right: 30px;
 }
 
+/* Formatting for right side of screen */
 .right-side {
   padding-right: 30px; /* Adjust the padding as needed */
+}
+
+/* Formatting for Fetch Histogram button */
+.fetchHistogramButton {
+  margin-top: 10px;
 }
