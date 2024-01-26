@@ -1,5 +1,7 @@
 # helpers/validator.R
 
+# this code is included in app.R
+
 # check existance of all attributes in data object
 # send bad_request error if one of the attributes does
 # not exist
@@ -56,6 +58,7 @@ checkNumber <- function(value, attributeName = "number") {
   return(value)
 }
 
+# check if the value is a number or numeric, give back the value.
 checkNumeric <- function(value, attributeName = "numeric"){
   return(tryCatch(as.numeric(value),  #produces warning that NA is returned
                   warning = function(warning) bad_request(paste0(value, " cannot be converted to numeric"))  ))

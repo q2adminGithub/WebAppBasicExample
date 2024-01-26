@@ -1,3 +1,8 @@
+# helpers/database.R
+
+# this code is included in app.R
+
+# check whether database connection is established, throws if not.
 dbIsConnected <- function(origin = ""){
     isDBconnected <- pool::dbIsValid(con)
     if(!isDBconnected) {
@@ -7,43 +12,43 @@ dbIsConnected <- function(origin = ""){
     }
 }
 
+# insert a new row into table statesave with ts_utc the (UTC) system datetime and statejson the input jsonString
+# if the total number of rows in table statesave after insertion exceeds maxNbrSaved, delete the most out-of-date rows until there are maxNbrSaved rows left
+# optional origin to log the referrer in case of an error
 addToStatesave <- function(jsonString, origin = ""){
     maxNbrSaved <- 6 # number of slots in the database for user to save app-states
     dbIsConnected(origin)
     ts <- format(Sys.time(),'%Y-%m-%d %H:%M:%S')
     pool::dbExecute(con, paste0("INSERT INTO statesave (ts_utc, statejson) VALUES ('",ts,"','", jsonString, "')"))
-
     pool::dbExecute(con, paste0("DELETE FROM statesave WHERE stateid IN (SELECT stateid FROM statesave ORDER BY stateid DESC OFFSET ", maxNbrSaved, ")"))
-
-    #nRows <- nrow(pool::dbReadTable(con, 'statesave'))
-    #if (nRows > maxNbrSaved){
-    #    df <- pool::dbGetQuery(con, paste0("SELECT stateid from statesave order by stateid asc limit ", (nRows-maxNbrSaved)))
-    #    pool::dbExecute(con, paste0("DELETE FROM statesave WHERE stateid IN (", paste0(df[['stateid']], collapse=','),")"))
-    #    logger::log_info(paste0("deleting", paste0(df[['stateid']], collapse=',')))
-    #}
 }
 
+# get the stateid and the timestamp for all saved states from table savestate
+# optional origin to log the referrer in case of an error
+# returns as dictionary {'states': [{'stateid':..., 'ts_utc':...}, {...}, ...]}
 savedStates <- function(origin = ""){
     dbIsConnected(origin)
     df <- pool::dbGetQuery(con, "SELECT stateid, ts_utc FROM statesave")
-    #return(list(ts_utc=df[['ts_utc']], stateid=df[['stateid']]))
     return(list(states=jsonlite::fromJSON(jsonlite::toJSON(df))))
 }
 
+# get the content of row with stateid=i as dictionary
+# optional origin to log the referrer in case of an error
+# returns as dictionary {'state'={'stateid': i, 'ts_utc':..., 'jsonstring':{...}}} if there is a row with stateid=i or {'state'={}} else
 savedState <- function(i, origin = ""){
     dbIsConnected(origin)
-    sql <- pool::sqlInterpolate(con, "SELECT * FROM statesave WHERE stateid = ?id", id=i) 
+    sql <- pool::sqlInterpolate(con, "SELECT * FROM statesave WHERE stateid = ?id", id=i) # sanitize string since i is direct user input 
     df <- pool::dbGetQuery(con, sql)
-    #write.csv(df, "/app/test.txt") #, row.names=FALSE)
-    #logger::log_info(paste0('sql result ', nrow(df), " ", paste0(df[['statejson']], collapse=',')))
     res <- if (nrow(df) > 0) df[['statejson']][1] else '{}'
-    #logger::log_info(paste0('savedstate jsonString', i, ' ', res))
     return(list(state=jsonlite::fromJSON(res, simplifyVector = FALSE)))
 }
 
+# deletes the row with stateid=i
+# optional origin to log the referrer in case of an error
+# returns as dictionary {'state'='deleted'} in any case
 deleteState <- function(i, origin = ""){
     dbIsConnected(origin)
-    sql <- pool::sqlInterpolate(con, "DELETE FROM statesave WHERE stateid = ?id", id=i) 
+    sql <- pool::sqlInterpolate(con, "DELETE FROM statesave WHERE stateid = ?id", id=i) # sanitize string since i is direct user input
     df <- pool::dbGetQuery(con, sql)
     return(list(state='deleted'))
 }

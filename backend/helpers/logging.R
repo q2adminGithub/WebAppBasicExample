@@ -1,9 +1,11 @@
 # helpers/logging.R
 
+# this code is included in app.R
 library('logger')
 library('tictoc')
 
-# write logs to file
+
+# create log-file
 log_dir <- "logs"
 if (!fs::dir_exists(log_dir)) fs::dir_create(log_dir)
 logger::log_appender(
@@ -23,12 +25,14 @@ convert_empty <- function(string = "") {
   return(string)
 }
 
+# start clock to measure api response time
 pre_route_logging <- function(req) {
   tictoc::tic(msg = req$PATH_INFO)
 }
 
+# stop clock to measure api response time and output to log-file
 post_route_logging <- function(req, res) {
-  end <- tictoc::toc(quiet = TRUE) # nolint
+  end <- tictoc::toc(quiet = TRUE)
   
   logger::log_info(sprintf('%s "%s" %s %s %s %s %s',
                    convert_empty(req$REMOTE_ADDR),
@@ -38,5 +42,5 @@ post_route_logging <- function(req, res) {
                    convert_empty(end$msg),
                    convert_empty(res$status),
                    round(end$toc - end$tic, digits = getOption("digits", 5))
-  )) # nolint
+  ))
 }

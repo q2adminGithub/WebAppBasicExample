@@ -27,8 +27,7 @@ square_function <- function(x) {
 #* @serializer unboxedJSON
 square_function_query <- function(x, save) {
   logger::log_info(paste0("query ", x, " ", typeof(x), " ", is.numeric(x), " ", is.finite(x), " ", nchar(x), " ", as.numeric(x), " ", save, " ", typeof(save)))
-  #x <- checkNumber(x) #throws for some reason? is.numeric("9") gives FALSE?
-  x <- checkNumeric(x)
+  x <- checkNumeric(x) # checkNumber("9") = FALSE?
   save <- checkBoolean(save)
   logger::log_info(paste0("query after check ", x, " ", typeof(x), " ", save, " ", typeof(save)))
   return(square_function_save(x, save))
