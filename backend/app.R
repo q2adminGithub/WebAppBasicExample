@@ -20,6 +20,7 @@ source("./helpers/validator.R")
 source("./helpers/database.R")
 
 logger::log_info(paste0('plumber API started'))
+
 # App initialization and settings for warning, trailing slash
 app <- plumber::pr()
 #options(warn = -1)
