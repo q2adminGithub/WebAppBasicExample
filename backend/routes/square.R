@@ -67,3 +67,19 @@ square_function_error <- function() {
   api_error('API Error', 400)
   return(list(status=400))
 }
+
+#* @apiTitle Histogram
+#* Get Histogram raw data
+#* @param ndraws
+#* @param mean
+#* @param sd
+#* @get /hist-raw
+hist_function <- function(ndraws, mean, sd) {
+  sample <- rnorm(as.integer(ndraws), as.numeric(mean), as.numeric(sd))
+  hist_data  <- hist(sample, plot=FALSE)
+  histogram_data <- data.frame(
+    mids = hist_data$mids,
+    counts = hist_data$counts
+  )
+  return(histogram_data)
+}

@@ -1,33 +1,44 @@
-import { useState } from 'react';
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
+import Plot from 'react-plotly.js';
+import React from 'react';
+import { PrimaryButton, DefaultButton, Spinner } from '@fluentui/react';
+import { TextField} from '@fluentui/react/lib/TextField';
 
-function App2() {
+
+
+function App() {
   const [input, setInput] = useState('');
   const [result, setResult] = useState('');
   const [savedstates, setSavedstates] = useState([]);
+  const [ndraws, setNdraws] = useState('');
+  const [mean, setMean] = useState('');
+  const [sd, setSd] = useState('');
+  const [rawdata, setRawData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const getSavedStates = async () => {
-    fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'})
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(retrieved => {
-        console.log('getsSavedStates', retrieved.states);
-        retrieved.states.forEach(function (item, index) {
-          console.log("TEST", item, index);
+  useEffect(() => {
+    const getSavedStates = async () => {
+      fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'})
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(retrieved => {
+          console.log('initial', retrieved.states);
+          setSavedstates(retrieved.states)
+          return retrieved.states;
+        })
+        .catch(error => {
+          console.error('initial Error:', error);
         });
-        //setSavedstates(retrieved.states)
-        return retrieved.states;
-      })
-      .catch(error => {
-        console.error('getsSavedStates Error:', error);
-      });
-  }
-  
+    }
+    getSavedStates();
+  }, []);
+
   const calculateSquare = async () => {
     fetch(`http://127.0.0.1:8080/square/${parseInt(input)}`,{method: 'GET'})
       .then(response => {
@@ -136,27 +147,109 @@ function App2() {
       });
   }
 
+  const getHistogram = async () => {
+    setIsLoading(true);
+    fetch(`http://127.0.0.1:8080/square/hist-raw?ndraws=${parseInt(ndraws)}&mean=${parseFloat(mean)}&sd=${parseFloat(sd)}`, { method: 'GET' })
+    .then(response => {
+      if (!response.ok) {
+        setResult('Invalid input value ... nothing returned');
+        throw new Error('getHistogram network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Check if 'data' is an array and has the expected structure
+      if (Array.isArray(data) && data.length > 0 && data[0].hasOwnProperty('mids') && data[0].hasOwnProperty('counts')) {
+        setRawData([
+          {
+            y: data.map(x => x["counts"]),
+            x: data.map(x => x["mids"]),
+            type: 'bar'
+          }
+        ]);
+      } else {
+        setResult('Invalid data format received from the server');
+      }
+      setIsLoading(false);
+    })
+    .catch(error => {
+      console.error('getHistogram error:', error);
+      setIsLoading(false);
+    });
+    
+    console.log("The response data is ", {rawdata})
+  }
+
 
   const savedStatesOutput = [];
   for (let i=0; i<savedstates.length; i++) savedStatesOutput.push(
-      <li key={savedstates[i].stateid}>{savedstates[i].ts_utc} {'  '} 
-      <button onClick={() =>{loadState(savedstates[i].stateid)}}>Load State</button>
-      <button onClick={() =>{deleteState(savedstates[i].stateid)}}>Delete State</button>
+      <li key={savedstates[i].stateid}>{savedstates[i].ts_utc + " UTC"} {'  '} 
+      <PrimaryButton onClick={() =>{loadState(savedstates[i].stateid)}}>Load State</PrimaryButton>
+      <DefaultButton onClick={() =>{deleteState(savedstates[i].stateid)}}>Delete State</DefaultButton>
       </li>
       );
 
+  const validateNdraws = (value) => {
+    const parsedValue = parseInt(value);
+
+    if (isNaN(parsedValue) || parsedValue > 10000) {
+      setErrorMessage('Error: Number of draws (ndraws) should be a valid number and not exceed 10000');
+    } else {
+      setErrorMessage('');
+      setNdraws(value);
+    }
+
+    
+  };
+
+  
   return (
     <>
-      <input type="number" value={input} onChange={(e) => setInput(e.target.value)} />
-      <button onClick={calculateSquare}>Calculate Square</button>
-      <p>Result: {result}</p>
-      <button onClick={saveState}>Save State</button>
-      <p>Saved States:</p>
-      <ul>
-        {savedStatesOutput}
-      </ul>
+     <div className="split-container">
+      <div className="left-side">
+        {/* Content for the left side */}
+        <h3>Demo 1: Calculation of square in backend and storing of input</h3>
+        <p>Enter number and press Calculate Square (optionally Save State)!:</p>
+        <TextField label="Number to be squared" placeholder="Please enter number to be squared here" value={input} onChange={(e) => setInput(e.target.value)} />
+        
+        <PrimaryButton onClick={calculateSquare}>Calculate Square</PrimaryButton>
+        <p>Result: {result}</p>
+        <PrimaryButton onClick={saveState}>Save State</PrimaryButton>
+        <p>Saved States:</p>
+        <ul>
+          {savedStatesOutput}
+        </ul>
+      </div>
+      <div className="right-side">
+        {/* Content for the right side */}
+        <h3>Demo 2: Simulation of normally distributed random variables in backend</h3>
+        <p>Enter ndraws, mean and standard deviation and press Fetch Histogram!:</p>
+          <TextField label="Ndraws" placeholder="Please enter number of draws here" type="number" value={ndraws} onChange={(e) => validateNdraws(e.target.value)} />
+          <TextField label="Mean" placeholder="Please enter mean of simulated random variable here" type="number" value={mean} onChange={(e) => setMean(e.target.value)}/>
+          <TextField label="StdDev" placeholder="Please enter standard deviation of simulated random variable here" type="number" value={sd} onChange={(e) => setSd(e.target.value)} />
+          <PrimaryButton onClick={getHistogram} disabled={isLoading}>Fetch Histogram</PrimaryButton>
+          {isLoading ? <Spinner label="Loading ..." /> : 
+            <Plot
+                    data={rawdata}
+                    layout={{
+                      title: 'Histogram for normal distribution',
+                      bargap: 0.01,
+                      autosize: true,
+                      xaxis: {
+                        title: 'x'
+                      },
+                      yaxis: {
+                        title: 'Frequency'
+                      },
+                      useResizeHandler: true,
+                      responsive: true
+                    }}
+            />
+          }
+      </div>
+     </div>
     </>
-  );
-}
+    );
+ }
 
- export default App2;
+ export default App;
