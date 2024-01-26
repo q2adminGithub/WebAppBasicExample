@@ -16,6 +16,7 @@ function App() {
   const [sd, setSd] = useState('');
   const [rawdata, setRawData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const getSavedStates = async () => {
@@ -188,6 +189,19 @@ function App() {
       </li>
       );
 
+  const validateNdraws = (value) => {
+    const parsedValue = parseInt(value);
+
+    if (isNaN(parsedValue) || parsedValue > 10000) {
+      setErrorMessage('Error: Number of draws (ndraws) should be a valid number and not exceed 10000');
+    } else {
+      setErrorMessage('');
+      setNdraws(value);
+    }
+
+    
+  };
+
   
   return (
     <>
@@ -210,7 +224,7 @@ function App() {
         {/* Content for the right side */}
         <h3>Demo 2: Simulation of normally distributed random variables in backend</h3>
         <p>Enter ndraws, mean and standard deviation and press Fetch Histogram!:</p>
-          <TextField label="Ndraws" placeholder="Please enter number of draws here" type="number" value={ndraws} onChange={(e) => setNdraws(e.target.value)} />
+          <TextField label="Ndraws" placeholder="Please enter number of draws here" type="number" value={ndraws} onChange={(e) => validateNdraws(e.target.value)} />
           <TextField label="Mean" placeholder="Please enter mean of simulated random variable here" type="number" value={mean} onChange={(e) => setMean(e.target.value)}/>
           <TextField label="StdDev" placeholder="Please enter standard deviation of simulated random variable here" type="number" value={sd} onChange={(e) => setSd(e.target.value)} />
           <PrimaryButton onClick={getHistogram} disabled={isLoading}>Fetch Histogram</PrimaryButton>
