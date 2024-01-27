@@ -28,30 +28,12 @@ services:
       timeout: 5s
       retries: 5
 
-  frontend:
-    build:
-      dockerfile: ./Dockerfile_frontend
-      context: .
-    container_name: frontend
-    restart: unless-stopped
-    volumes:
-      - ./frontend:/app
-      - "/app/node_modules"
-    networks:
-      - my_network
-    ports:
-      - "3000:3000"
-    depends_on:
-      backend:
-        condition: service_healthy
-    command: ["npm", "start"]
-
   backend:
     build:
       dockerfile: Dockerfile_backend
       context: .
-      target: backend_devdb
-    container_name: backend_devdb
+      target: backend_testdb
+    container_name: backend_testdb
     volumes:
       - ./backend:/app
     networks:
@@ -66,6 +48,22 @@ services:
       interval: 30s
       timeout: 5s
       retries: 2
+
+  test_backend:
+    build:
+      dockerfile: Dockerfile_backend
+      context: .
+      target: test_backend
+    container_name: test_backend
+    volumes:
+      - ./tests/backend:/app
+    networks:
+      - my_network
+    ports:
+      - "8087:8087"
+    depends_on:
+      backend:
+        condition: service_healthy
 
 volumes:
   postgres_db:

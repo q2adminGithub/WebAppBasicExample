@@ -29,20 +29,24 @@ WORKDIR /app
 
 EXPOSE 8080
 
+FROM backend as backend_testdb
 ENTRYPOINT ["Rscript"]
-CMD ["app.R"]
+CMD ["--vanilla", "app.R", "mydb_test", "myuser", "mypassword"]
 
+FROM backend as backend_devdb
+ENTRYPOINT ["Rscript"]
+CMD ["--vanilla", "app.R", "mydb_dev", "myuser", "mypassword"]
 
+FROM backendbase as test_backend
 
-FROM backendbase as backendtest
-
-RUN Rscript -e "pak::pkg_install(c('testthat', 'httr'))"
+RUN Rscript -e "pak::pkg_install(c('testthat', 'httr', 'httr2'))"
 # setup workspace
 COPY ./tests/backend /app
 
 WORKDIR /app
 
 EXPOSE 8087
+
 
 ENTRYPOINT ["Rscript"]
 CMD ["test.R"]

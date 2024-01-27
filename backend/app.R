@@ -4,13 +4,18 @@ library(magrittr)
 library(jsonlite)
 
 
+args = commandArgs(trailingOnly=TRUE)
+if (length(args) != 3) {
+  stop("must provide three arguments: database name, database user, password", call.=FALSE)
+}
+
 # Create pool connection
 con <- pool::dbPool(
     drv = RPostgres::Postgres(),
-    dbname = "mydb_dev",
+    dbname = args[1],
     host = "postgres_db", # this needs to be the name of the postgres service (line 3 in docker-compose.yml)
-    user = "myuser",
-    password = "mypassword",
+    user = args[2],
+    password = args[3],
     port = 5432)
 
 # load required helpers
@@ -20,6 +25,7 @@ source("./helpers/validator.R")
 source("./helpers/database.R")
 
 logger::log_info(paste0('plumber API started'))
+logger::log_info(paste0('connected to database ', args[1]))
 # App initialization and settings for warning, trailing slash
 app <- plumber::pr()
 #options(warn = -1)
