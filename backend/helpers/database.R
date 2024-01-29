@@ -52,3 +52,12 @@ deleteState <- function(i, origin = ""){
     df <- pool::dbGetQuery(con, sql)
     return(list(state='deleted'))
 }
+
+# deletes all rows in table statesave
+# optional origin to log the referrer in case of an error
+# returns as dictionary {'states'='deleted all'}
+deleteStates <- function(origin = ""){
+    dbIsConnected(origin)
+    df <- pool::dbGetQuery(con, "DELETE FROM statesave")
+    return(list(states='deleted all'))
+}

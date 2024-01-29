@@ -57,6 +57,14 @@ delete_state <- function(i) {
   return(deleteState(i, 'GET /square/deletestate/<i:int>'))
 }
 
+#* @apiTitle  deletes all saved states
+#* @apiDescription deletes all saved states from database 
+#* @get /deletestates
+#* @serializer json
+delete_states <- function(x) {
+  return(deleteStates('GET /square/deletestates'))
+}
+
 #* @apiTitle  error test
 #* @apiDescription  error test
 #* @get /error

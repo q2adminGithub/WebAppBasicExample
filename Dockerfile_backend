@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.3.2
+FROM rocker/r-ver:4.3.2 as backendbase
 
 # install os dependencies
 RUN apt-get update -qq
@@ -14,6 +14,7 @@ RUN apt-get install -y --no-install-recommends \
 # install pak alternatives to install.packages
 RUN Rscript -e "install.packages('pak', repos = sprintf('https://r-lib.github.io/p/pak/stable'))"
 
+FROM backendbase as backend
 # install latest plumber from github main branch
 RUN Rscript -e "pak::pkg_install('rstudio/plumber@main')"
 
@@ -28,5 +29,24 @@ WORKDIR /app
 
 EXPOSE 8080
 
+FROM backend as backend_testdb
 ENTRYPOINT ["Rscript"]
-CMD ["app.R"]
+CMD ["--vanilla", "app.R", "mydb_test", "myuser", "mypassword"]
+
+FROM backend as backend_devdb
+ENTRYPOINT ["Rscript"]
+CMD ["--vanilla", "app.R", "mydb_dev", "myuser", "mypassword"]
+
+FROM backendbase as test_backend
+
+RUN Rscript -e "pak::pkg_install(c('testthat', 'httr', 'httr2'))"
+# setup workspace
+COPY ./tests/backend /app
+
+WORKDIR /app
+
+EXPOSE 8087
+
+
+ENTRYPOINT ["Rscript"]
+CMD ["test.R"]
