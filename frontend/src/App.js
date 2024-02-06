@@ -51,7 +51,7 @@ function App() {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({input: parseInt(appState.square.input), save: false})
           })
@@ -79,7 +79,7 @@ function App() {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({input: parseInt(appState.square.input), save: true})
           })
@@ -132,7 +132,7 @@ function App() {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({input: parseInt(retrieved.state.input[0]), save: false})
           });
@@ -196,7 +196,7 @@ function App() {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ndraws: parseInt(appState.histogram.ndraws), mean: parseFloat(appState.histogram.mean), sd: parseFloat(appState.histogram.sd)})
           })
