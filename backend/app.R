@@ -5,7 +5,6 @@ library(jsonlite)
 library(future)
 library(promises)
 
-
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) != 3) {
     stop("must provide three arguments: database name, database user, password", call. = FALSE)
@@ -26,6 +25,12 @@ source("./helpers/error.R")
 source("./helpers/logging.R")
 source("./helpers/validator.R")
 source("./helpers/database.R")
+
+WORKERS <- strtoi(Sys.getenv("WORKERS", 3))
+
+future::plan(future::multisession(workers = WORKERS))
+
+log_info(paste0("Plumber will use ", WORKERS, " workers"))
 
 logger::log_info(paste0("plumber API started"))
 logger::log_info(paste0("connected to database ", args[1]))
