@@ -217,7 +217,7 @@ function App() {
   const validateNdraws = (value) => {
     const parsedValue = parseInt(value);
 
-    if (isNaN(parsedValue) || parsedValue > 10000) {
+    if (isNaN(parsedValue) || parsedValue > 100000000) {
       setErrorMessage(' Error - Number of draws (ndraws) should be a valid number and not exceed 10000');
     } else {
       setErrorMessage(' Number of draws is valid.');

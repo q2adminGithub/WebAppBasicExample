@@ -111,3 +111,25 @@ hist_function <- function(ndraws, mean, sd) {
     return(histogram_data)
   })
 }
+
+#* @apiTitle blocking endpoint
+#* blocking endpoint(for testing)
+#* @get /blocking
+blocking_function <- function() {
+    Sys.sleep(5)
+    result <- savedStates("GET /square/savedstates")
+    Sys.sleep(5)
+    return(result)
+}
+
+#* @apiTitle non-blocking endpoint
+#* non-blocking endpoint(for testing)
+#* @get /non-blocking
+nonblocking_function <- function() {
+  future_promise({
+    Sys.sleep(5)
+    # result <- savedStates("GET /square/savedstates") <---- this does not work: future clashes with pool
+    Sys.sleep(5)
+    return(result)
+  })
+}

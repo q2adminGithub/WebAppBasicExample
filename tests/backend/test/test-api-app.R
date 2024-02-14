@@ -1,5 +1,6 @@
 # test/test-api-app.R
 library(httr)
+library(curl)
 
 test_that("GET /health-check : API is running", {
   # Send API request
@@ -91,4 +92,28 @@ test_that("GET /square/savedstate/0 returns an empty dictionary", {
   expect_equal(
     length(jsonlite::fromJSON(httr::content(req, as = 'text', encoding =  "UTF-8"))$state), 
     0)  
+})
+
+test_that("GET /square/non-blocking does not block the API", {
+  done_callback <- function(req){expect_equal(req$status_code, 200)}
+  
+  pool <- curl::new_pool()
+  curl::curl_fetch_multi("http://backend:8080/square/non-blocking", done = done_callback, pool = pool)
+  curl::curl_fetch_multi("http://backend:8080/square/non-blocking", done = done_callback, pool = pool)
+  curl::curl_fetch_multi("http://backend:8080/square/non-blocking", done = done_callback, pool = pool)
+
+  output <- curl::multi_run(pool = pool)
+  expect_equal(output$success, 3)
+})
+
+test_that("GET /square/blocking blocks the API", {
+  done_callback <- function(req){expect_equal(req$status_code, 200)}
+  
+  pool <- curl::new_pool()
+  curl::curl_fetch_multi("http://backend:8080/square/blocking", done = done_callback, pool = pool)
+  curl::curl_fetch_multi("http://backend:8080/square/blocking", done = done_callback, pool = pool)
+  curl::curl_fetch_multi("http://backend:8080/square/blocking", done = done_callback, pool = pool)
+
+  output <- curl::multi_run(pool = pool)
+  expect_equal(output$success, 3)
 })
