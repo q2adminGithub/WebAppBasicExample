@@ -38,10 +38,14 @@ app %>%
 
 # for development: headers to switch off CORS (for simple get requests, not sufficient for application/json post requests)
 app %>%
-    plumber::pr_filter("cors", function(res){
+    plumber::pr_filter("cors", function(req, res){
         res$setHeader("Access-Control-Allow-Origin", "*") 
-        res$setHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
-        res$setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type, Authorization, X-Requested-With")
+        if (req$REQUEST_METHOD == "OPTIONS") { # for cors preflight check
+            res$setHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
+            res$setHeader("Access-Control-Allow-Headers", req$HTTP_ACCESS_CONTROL_REQUEST_HEADERS)
+            res$status <- 200
+            return (list())
+        }
         plumber::forward()
     })
 
