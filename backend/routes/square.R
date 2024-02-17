@@ -19,6 +19,17 @@ square_function <- function(x) {
   return(square_function_save(x, FALSE))
 }
 
+#* @apiTitle  Square of a number with post request
+#* @apiDescription An API that computes the square of a number by post request
+#* @post /
+#* @serializer unboxedJSON
+square_function_post <- function(req) {
+  body <- jsonlite::fromJSON(req$postBody)
+  x <- body$input
+  save <- body$save
+  return(square_function_save(x, save))
+}
+
 #* @apiTitle  Square of a number with query text
 #* @apiDescription An API that computes the square of a number
 #* @param x
@@ -133,3 +144,18 @@ nonblocking_function <- function() {
     return(result)
   })
 }
+
+#* @apiTitle Histogram via post request
+#* Get Histogram raw data via post request
+#* @post /hist-raw
+hist_function_post <- function(req) {
+  body <- jsonlite::fromJSON(req$postBody)
+  sample <- rnorm(as.integer(body$ndraws), as.numeric(body$mean), as.numeric(body$sd))
+  hist_data  <- hist(sample, plot=FALSE)
+  histogram_data <- data.frame(
+    mids = hist_data$mids,
+    counts = hist_data$counts
+  )
+  return(histogram_data)
+}
+

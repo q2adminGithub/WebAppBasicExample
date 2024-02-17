@@ -8,15 +8,11 @@ import { TextField} from '@fluentui/react/lib/TextField';
 
 
 function App() {
-  const [input, setInput] = useState('');
-  const [result, setResult] = useState('');
   const [savedstates, setSavedstates] = useState([]);
-  const [ndraws, setNdraws] = useState('');
-  const [mean, setMean] = useState('');
-  const [sd, setSd] = useState('');
-  const [rawdata, setRawData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [appState, setAppState] = useState({'square': {'input': ''}, 'histogram': {'ndraws': '', 'mean': '', 'sd': ''}})
+  const [appResult, setAppResult] = useState({'square': {'result': ''}, 'histogram': {'rawdata': []}})
 
   /**
    * useEffect hook to fetch and set the saved states from the server.
@@ -51,16 +47,23 @@ function App() {
    * a request to the backend.
    */
   const calculateSquare = async () => {
-    fetch(`http://127.0.0.1:8080/square/${parseInt(input)}`,{method: 'GET'})
+    fetch(`http://127.0.0.1:8080/square`,{
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({input: parseInt(appState.square.input), save: false})
+          })
       .then(response => {
         if (!response.ok) {
-          setResult('invalid input value ... nothing returned');
+          setAppResult({...appResult, square: {...appResult.square, result: 'invalid input value ... nothing returned'}});
           throw new Error('calculateSquare network response was not ok');
         }
         return response.json();
       })
       .then(retrieved => {
-        setResult(retrieved.result);
+        setAppResult({...appResult, square: {...appResult.square, result: retrieved.result}});
         console.log('calculateSquare', retrieved, retrieved.result);
       })
       .catch(error => {
@@ -72,16 +75,23 @@ function App() {
    * and fetch the updated list of saved states from the backend.
    */
   const saveState = async () => {
-    fetch(`http://127.0.0.1:8080/square/${parseInt(input)}/true`,{method: 'GET'})
+    fetch(`http://127.0.0.1:8080/square`,{
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({input: parseInt(appState.square.input), save: true})
+          })
       .then(response => {
         if (!response.ok) {
-          setResult('invalid input value ... nothing returned');
+          setAppResult({...appResult, square: {...appResult.square, result: 'invalid input value ... nothing returned'}});
           throw new Error('saveState network response was not ok');
         }
         return response.json();
       })
       .then(retrieved => {
-        setResult(retrieved.result);
+        setAppResult({...appResult, square: {...appResult.square, result: retrieved.result}});
         console.log('saveState ', retrieved, retrieved.result);
         return fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'});
       })
@@ -116,18 +126,26 @@ function App() {
         return response.json();
       })
       .then(retrieved => {
-        setInput(parseInt(retrieved.state.input[0]));
+        setAppState({...appState, square: {...appState.square, input: retrieved.state.input[0]}});
         console.log('loadState', retrieved);
-        return fetch(`http://127.0.0.1:8080/square/${parseInt(retrieved.state.input[0])}`,{method: 'GET'});
+        return fetch(`http://127.0.0.1:8080/square`,{
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({input: parseInt(retrieved.state.input[0]), save: false})
+          });
       })
       .then(response => {
         if (!response.ok) {
+          setAppResult({...appResult, square: {...appResult.square, result: 'invalid input value ... nothing returned'}});
           throw new Error('calculateSquare network response was not ok');
         }
         return response.json();
       })
       .then(retrieved => {
-        setResult(retrieved.result);
+        setAppResult({...appResult, square: {...appResult.square, result: retrieved.result}});
         console.log('calculateSquare in loadState', retrieved, retrieved.result);
       })
       .catch(error => {
@@ -174,10 +192,17 @@ function App() {
    */       
   const getHistogram = async () => {
     setIsLoading(true);
-    fetch(`http://127.0.0.1:8080/square/hist-raw?ndraws=${parseInt(ndraws)}&mean=${parseFloat(mean)}&sd=${parseFloat(sd)}`, { method: 'GET' })
+    fetch(`http://127.0.0.1:8080/square/hist-raw`,{
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ndraws: parseInt(appState.histogram.ndraws), mean: parseFloat(appState.histogram.mean), sd: parseFloat(appState.histogram.sd)})
+          })
     .then(response => {
       if (!response.ok) {
-        setResult('Invalid input value ... nothing returned');
+        setAppResult({...appResult, square: {...appResult.square, result: 'invalid input value ... nothing returned'}});
         throw new Error('getHistogram network response was not ok');
       }
       return response.json();
@@ -185,15 +210,15 @@ function App() {
     .then(data => {
       // Check if 'data' is an array and has the expected structure
       if (Array.isArray(data) && data.length > 0 && data[0].hasOwnProperty('mids') && data[0].hasOwnProperty('counts')) {
-        setRawData([
+        setAppResult({...appResult, histogram: {rawdata: [
           {
             y: data.map(x => x["counts"]),
             x: data.map(x => x["mids"]),
             type: 'bar'
           }
-        ]);
+        ]}});
       } else {
-        setResult('Invalid data format received from the server');
+        setAppResult({...appResult, square: {...appResult.square, result: 'invalid data format received from the server'}});
       }
       setIsLoading(false);
     })
@@ -202,7 +227,7 @@ function App() {
       setIsLoading(false);
     });
     
-    console.log("The response data is ", {rawdata})
+    //console.log("The response data is ", {appResult.histogram.rawdata})
   }
 
 
@@ -221,7 +246,7 @@ function App() {
       setErrorMessage(' Error - Number of draws (ndraws) should be a valid number and not exceed 10000');
     } else {
       setErrorMessage(' Number of draws is valid.');
-      setNdraws(value);
+      setAppState({...appState, histogram: {...appState.histogram, ndraws: value}});
     }
 
     
@@ -239,11 +264,11 @@ function App() {
           <p>Enter number and press Calculate Square (optionally Save State)!:</p>
           
           {/* Input field for the number to be squared */}
-          <TextField label="Number to be squared" placeholder="Please enter number to be squared here" value={input} onChange={(e) => setInput(e.target.value)} />
+          <TextField label="Number to be squared" placeholder="Please enter number to be squared here" value={appState.square.input} onChange={(e) => setAppState({...appState, square: {...appState.square, input: e.target.value}})} />
           
           {/* Buttons to trigger calculations and state-saving */}
           <PrimaryButton onClick={calculateSquare}>Calculate Square</PrimaryButton>
-          <p>Result: {result}</p>
+          <p>Result: {appResult.square.result}</p>
           <PrimaryButton onClick={saveState}>Save State</PrimaryButton>
           
           {/* Display the list of saved states */}
@@ -260,9 +285,9 @@ function App() {
           <p>Enter ndraws, mean, and standard deviation and press Fetch Histogram!:</p>
   
           {/* Input fields for ndraws, mean, and standard deviation */}
-          <TextField label="Ndraws" placeholder="Please enter number of draws here" type="number" value={ndraws} onChange={(e) => validateNdraws(e.target.value)} />
-          <TextField label="Mean" placeholder="Please enter mean of simulated random variable here" type="number" value={mean} onChange={(e) => setMean(e.target.value)} />
-          <TextField label="StdDev" placeholder="Please enter standard deviation of simulated random variable here" type="number" value={sd} onChange={(e) => setSd(e.target.value)} />
+          <TextField label="Ndraws" placeholder="Please enter number of draws here" type="number" value={appState.histogram.ndraws} onChange={(e) => validateNdraws(e.target.value)} />
+          <TextField label="Mean" placeholder="Please enter mean of simulated random variable here" type="number" value={appState.histogram.mean} onChange={(e) => setAppState({...appState, histogram: {...appState.histogram, mean: e.target.value}})} />
+          <TextField label="StdDev" placeholder="Please enter standard deviation of simulated random variable here" type="number" value={appState.histogram.sd} onChange={(e) => setAppState({...appState, histogram: {...appState.histogram, sd: e.target.value}})} />
           
           {/* Button to trigger fetching histogram data */}
           <PrimaryButton onClick={getHistogram} disabled={isLoading} className="fetchHistogramButton">Fetch Histogram</PrimaryButton>
@@ -270,7 +295,7 @@ function App() {
           {/* Display the histogram plot if data is available, otherwise show a loading spinner */}
           {isLoading ? <Spinner label="Loading ..." /> : 
             <Plot
-              data={rawdata}
+              data={appResult.histogram.rawdata}
               layout={{
                 title: 'Histogram for normal distribution',
                 bargap: 0.01,
