@@ -20,7 +20,7 @@ RUN Rscript -e "pak::pkg_install('rstudio/plumber@main')"
 
 # install other R packages
 RUN Rscript -e "pak::pkg_install(c('logger','tictoc', 'fs', 'jsonlite'))"
-RUN Rscript -e "pak::pkg_install(c('DBI','RPostgres','dbplyr','magrittr','yaml','pool'))"
+RUN Rscript -e "pak::pkg_install(c('DBI','RPostgres','dbplyr','magrittr','yaml','pool','future','promises'))"
 
 # setup workspace
 COPY ./backend /app
