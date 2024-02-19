@@ -34,7 +34,8 @@ services:
       context: .
       target: backend_testdb
     environment:
-      - .env
+      - DB_USERNAME=myuser
+      - DB_PASSWORD=mypassword
     container_name: backend_testdb
     volumes:
       - ./backend:/app
