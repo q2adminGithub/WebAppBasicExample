@@ -19,7 +19,7 @@ FROM backendbase as backend
 RUN Rscript -e "pak::pkg_install('rstudio/plumber@main')"
 
 # install other R packages
-RUN Rscript -e "pak::pkg_install(c('logger','tictoc', 'fs', 'jsonlite'))"
+RUN Rscript -e "pak::pkg_install(c('logger','tictoc', 'fs', 'jsonlite','config'))"
 RUN Rscript -e "pak::pkg_install(c('DBI','RPostgres','dbplyr','magrittr','yaml','pool','future','promises'))"
 
 # setup workspace
@@ -31,11 +31,11 @@ EXPOSE 8080
 
 FROM backend as backend_testdb
 ENTRYPOINT ["Rscript"]
-CMD ["--vanilla", "app.R", "mydb_test", "myuser", "mypassword"]
+CMD ["--vanilla", "app.R", "mydb_test"]
 
 FROM backend as backend_devdb
 ENTRYPOINT ["Rscript"]
-CMD ["--vanilla", "app.R", "mydb_dev", "myuser", "mypassword"]
+CMD ["--vanilla", "app.R", "mydb_dev"]
 
 FROM backendbase as test_backend
 

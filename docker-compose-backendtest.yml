@@ -33,6 +33,8 @@ services:
       dockerfile: Dockerfile_backend
       context: .
       target: backend_testdb
+    environment:
+      - .env
     container_name: backend_testdb
     volumes:
       - ./backend:/app

@@ -51,6 +51,8 @@ services:
       dockerfile: Dockerfile_backend
       context: .
       target: backend_devdb
+    environment:
+      - .env
     container_name: backend_devdb
     volumes:
       - ./backend:/app
