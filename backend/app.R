@@ -5,8 +5,6 @@ library(jsonlite)
 library(future)
 library(promises)
 
-config <- config::get()
-
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) != 1) {
     stop("must provide argument: database name", call. = FALSE)
@@ -19,7 +17,7 @@ con <- pool::dbPool(
     host = "postgres_db", # this needs to be the name of the postgres service (line 3 in docker-compose.yml)
     user = Sys.getenv("DB_USERNAME"),
     password = Sys.getenv("DB_PASSWORD"),
-    port = config$dbport
+    port = strtoi(Sys.getenv("DB_PORT"))
 )
 
 # load required helpers
@@ -28,7 +26,7 @@ source("./helpers/logging.R")
 source("./helpers/validator.R")
 source("./helpers/database.R")
 
-WORKERS <- strtoi(Sys.getenv("WORKERS", config$workers))
+WORKERS <- strtoi(Sys.getenv("BACKEND_WORKERS"))
 
 future::plan(future::multisession(workers = WORKERS))
 
@@ -83,7 +81,7 @@ for (file_name in r_routes_file_names) {
 
 # run plumber
 app %>%
-    plumber::pr_run(host = config$host, port = config$port)
+    plumber::pr_run(host = Sys.getenv("BACKEND_HOST"), port = strtoi(Sys.getenv("BACKEND_PORT")))
 
 # Close pool connection on exit
 app$registerHooks(

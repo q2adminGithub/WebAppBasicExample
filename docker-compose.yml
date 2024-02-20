@@ -33,6 +33,8 @@ services:
       dockerfile: ./Dockerfile_frontend
       context: .
     container_name: frontend
+    environment:
+      REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL}
     restart: unless-stopped
     volumes:
       - ./frontend:/app
@@ -52,8 +54,12 @@ services:
       context: .
       target: backend_devdb
     environment:
-      - DB_USERNAME=myuser
-      - DB_PASSWORD=mypassword
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      BACKEND_WORKERS: ${BACKEND_WORKERS}
+      BACKEND_HOST: ${BACKEND_HOST}
+      BACKEND_PORT: ${BACKEND_PORT}
+      DB_PORT: ${DB_PORT}
     container_name: backend_devdb
     volumes:
       - ./backend:/app
