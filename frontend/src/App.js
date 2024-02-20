@@ -13,6 +13,7 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [appState, setAppState] = useState({'square': {'input': ''}, 'histogram': {'ndraws': '', 'mean': '', 'sd': ''}})
   const [appResult, setAppResult] = useState({'square': {'result': ''}, 'histogram': {'rawdata': []}})
+  const backend_url=process.env.REACT_APP_BACKEND_URL
 
   /**
    * useEffect hook to fetch and set the saved states from the server.
@@ -22,7 +23,7 @@ function App() {
     * Function to asynchronously retrieve saved states from the server.
     */
     const getSavedStates = async () => {
-      fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'})
+      fetch({backend_url}+'square/savedstates',{method: 'GET'})
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -47,7 +48,7 @@ function App() {
    * a request to the backend.
    */
   const calculateSquare = async () => {
-    fetch(`http://127.0.0.1:8080/square`,{
+    fetch({backend_url}+'square',{
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -75,7 +76,7 @@ function App() {
    * and fetch the updated list of saved states from the backend.
    */
   const saveState = async () => {
-    fetch(`http://127.0.0.1:8080/square`,{
+    fetch({backend_url}+'square',{
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -93,7 +94,7 @@ function App() {
       .then(retrieved => {
         setAppResult({...appResult, square: {...appResult.square, result: retrieved.result}});
         console.log('saveState ', retrieved, retrieved.result);
-        return fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'});
+        return fetch({backend_url}+'square/savedstates',{method: 'GET'});
       })
       .then(response => {
         if (!response.ok) {
@@ -118,7 +119,7 @@ function App() {
    *  calculate its square.
    */
   const loadState = async (stateid) => {
-    fetch(`http://127.0.0.1:8080/square/savedstate/${parseInt(stateid)}`,{method: 'GET'})
+    fetch({backend_url}+'square/savedstate/${parseInt(stateid)}',{method: 'GET'})
       .then(response => {
         if (!response.ok) {
           throw new Error('loadState network response was not ok');
@@ -128,7 +129,7 @@ function App() {
       .then(retrieved => {
         setAppState({...appState, square: {...appState.square, input: retrieved.state.input[0]}});
         console.log('loadState', retrieved);
-        return fetch(`http://127.0.0.1:8080/square`,{
+        return fetch({backend_url}+'square',{
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -157,7 +158,7 @@ function App() {
    * Asynchronous function to delete a saved input value from the backend .
    */
   const deleteState = async (stateid) => {
-    fetch(`http://127.0.0.1:8080/square/deletestate/${parseInt(stateid)}`,{method: 'GET'})
+    fetch({backend_url}+'square/deletestate/${parseInt(stateid)}',{method: 'GET'})
       .then(response => {
         if (!response.ok) {
           throw new Error('deleteState network response was not ok');
@@ -166,7 +167,7 @@ function App() {
       })
       .then(retrieved => {
         console.log('deleteState ', retrieved);
-        return fetch(`http://127.0.0.1:8080/square/savedstates`,{method: 'GET'});
+        return fetch({backend_url}+'square/savedstates',{method: 'GET'});
       })
       .then(response => {
         if (!response.ok) {
@@ -192,7 +193,7 @@ function App() {
    */       
   const getHistogram = async () => {
     setIsLoading(true);
-    fetch(`http://127.0.0.1:8080/square/hist-raw`,{
+    fetch({backend_url}+'square/hist-raw',{
           method: 'POST',
           headers: {
             'Accept': 'application/json',

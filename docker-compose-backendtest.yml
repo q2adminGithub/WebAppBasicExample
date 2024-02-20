@@ -33,6 +33,13 @@ services:
       dockerfile: Dockerfile_backend
       context: .
       target: backend_testdb
+    environment:
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      BACKEND_WORKERS: ${BACKEND_WORKERS}
+      BACKEND_HOST: ${BACKEND_HOST}
+      BACKEND_PORT: ${BACKEND_PORT}
+      DB_PORT: ${DB_PORT}
     container_name: backend_testdb
     volumes:
       - ./backend:/app

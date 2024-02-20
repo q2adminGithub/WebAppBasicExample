@@ -10,7 +10,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 # Copy the package*.json files.
 COPY ./frontend/package.json ./frontend/package-lock.json /app/
 
-# RUN yarn install
+# RUN npm install
 RUN npm install --silent
 
 # Copy the rest of the application files.

@@ -6,8 +6,8 @@ library(future)
 library(promises)
 
 args <- commandArgs(trailingOnly = TRUE)
-if (length(args) != 3) {
-    stop("must provide three arguments: database name, database user, password", call. = FALSE)
+if (length(args) != 1) {
+    stop("must provide argument: database name", call. = FALSE)
 }
 
 # Create pool connection
@@ -15,9 +15,9 @@ con <- pool::dbPool(
     drv = RPostgres::Postgres(),
     dbname = args[1],
     host = "postgres_db", # this needs to be the name of the postgres service (line 3 in docker-compose.yml)
-    user = args[2],
-    password = args[3],
-    port = 5432
+    user = Sys.getenv("DB_USERNAME"),
+    password = Sys.getenv("DB_PASSWORD"),
+    port = strtoi(Sys.getenv("DB_PORT"))
 )
 
 # load required helpers
@@ -26,7 +26,7 @@ source("./helpers/logging.R")
 source("./helpers/validator.R")
 source("./helpers/database.R")
 
-WORKERS <- strtoi(Sys.getenv("WORKERS", 3))
+WORKERS <- strtoi(Sys.getenv("BACKEND_WORKERS"))
 
 future::plan(future::multisession(workers = WORKERS))
 
@@ -46,13 +46,13 @@ app %>%
 
 # for development: headers to switch off CORS (for simple get requests, not sufficient for application/json post requests)
 app %>%
-    plumber::pr_filter("cors", function(req, res){
-        res$setHeader("Access-Control-Allow-Origin", "*") 
+    plumber::pr_filter("cors", function(req, res) {
+        res$setHeader("Access-Control-Allow-Origin", "*")
         if (req$REQUEST_METHOD == "OPTIONS") { # for cors preflight check
             res$setHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
             res$setHeader("Access-Control-Allow-Headers", req$HTTP_ACCESS_CONTROL_REQUEST_HEADERS)
             res$status <- 200
-            return (list())
+            return(list())
         }
         plumber::forward()
     })
@@ -81,7 +81,7 @@ for (file_name in r_routes_file_names) {
 
 # run plumber
 app %>%
-    plumber::pr_run(host = "0.0.0.0", port = 8080)
+    plumber::pr_run(host = Sys.getenv("BACKEND_HOST"), port = strtoi(Sys.getenv("BACKEND_PORT")))
 
 # Close pool connection on exit
 app$registerHooks(
