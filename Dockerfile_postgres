@@ -1,3 +1,5 @@
 FROM postgres:16-alpine
 
+COPY ./backend/assets/inputdata/inputdata.txt /var/lib/postgresql/data/
+
 COPY ./init.sql /docker-entrypoint-initdb.d/
