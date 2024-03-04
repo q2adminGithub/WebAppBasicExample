@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import Datatable from "./Datatable";
 import Plot from 'react-plotly.js';
 import React from 'react';
-import { PrimaryButton, DefaultButton, Spinner } from '@fluentui/react';
+import { PrimaryButton, DefaultButton, Spinner, Icon, Label, Pivot, PivotItem } from '@fluentui/react';
 import { TextField} from '@fluentui/react/lib/TextField';
+import { initializeIcons } from '@fluentui/react/lib/Icons';
 
 
 
@@ -13,6 +15,8 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [appState, setAppState] = useState({'square': {'input': ''}, 'histogram': {'ndraws': '', 'mean': '', 'sd': ''}})
   const [appResult, setAppResult] = useState({'square': {'result': ''}, 'histogram': {'rawdata': []}})
+  const [inputData, setInputData] = useState({})
+  const [isLoadingInputData, setIsLoadingInputData] = useState(false);
   const backend_url=process.env.REACT_APP_BACKEND_URL
 
   /**
@@ -231,6 +235,27 @@ function App() {
     //console.log("The response data is ", {appResult.histogram.rawdata})
   }
 
+  const getInputData = async () => {
+    setIsLoadingInputData(true);
+    fetch(`${backend_url}dosimulation/allinputdata`,{method: 'GET'})
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('getInputData network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setInputData(data);
+      setIsLoadingInputData(false);
+    })
+    .catch(error => {
+      console.error('getInputData error:', error);
+      setIsLoadingInputData(false);
+    });
+    
+    //console.log("The response data is ", {appResult.histogram.rawdata})
+  }
+
 
   const savedStatesOutput = [];
   for (let i=0; i<savedstates.length; i++) savedStatesOutput.push(
@@ -253,6 +278,7 @@ function App() {
     
   };
 
+  //initializeIcons(undefined, { disableWarnings: true });
   
   return (
     <>
@@ -315,6 +341,19 @@ function App() {
   
           {/* Display status and error message, if any */}
           <p>Status: {errorMessage}</p>
+        </div>
+        <div>
+          <h3>Demo 3: load input data from database and display it</h3>
+          <PrimaryButton onClick={getInputData} disabled={isLoadingInputData} className="fetchInputDataButton">Load Input Data</PrimaryButton>
+          {isLoadingInputData ? <Spinner label="Loading ..." /> :
+            /*<Pivot overflowBehavior="menu" overflowAriaLabel="more items">*/
+            <Pivot>
+              {Object.keys(inputData).map(key => (
+                <PivotItem headerText={key} key={key}> 
+                    <Datatable mykey={key} data={inputData[key]} /> 
+                </PivotItem>))}
+            </Pivot>  
+          }
         </div>
       </div>
     </>
