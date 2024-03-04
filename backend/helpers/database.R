@@ -61,3 +61,30 @@ deleteStates <- function(origin = ""){
     df <- pool::dbGetQuery(con, "DELETE FROM statesave")
     return(list(states='deleted all'))
 }
+
+# get the JSON content in column datajson of row with name=dfname as list of dictionary per row
+# optional origin to log the referrer in case of an error
+# returns JSON content in column datajson if there is a row with name=dfname or [] else
+getSelectedInputData <- function(dfname, origin = ""){
+    dbIsConnected(origin)
+    sql <- pool::sqlInterpolate(con, "SELECT * FROM inputdata WHERE name = ?n", n=dfname) # sanitize string since dfname is direct user input 
+    df <- pool::dbGetQuery(con, sql)
+    res <- if (nrow(df) > 0) df[['datajson']][1] else '[]'
+    return(jsonlite::fromJSON(res, simplifyVector = FALSE))
+}
+
+# get the all input data of table inputdata as dictionary
+# optional origin to log the referrer in case of an error
+# returns dictionary with names as keys and list of dictionary per row as value 
+getInputData <- function(origin = ""){
+    dbIsConnected(origin)
+    df <- pool::dbGetQuery(con, "SELECT name, datajson FROM inputdata")
+    if (nrow(df) == 0){
+        return(list())
+    }
+    ret <- list()
+    for( i in rownames(df)){
+        ret[[df[i, "name"]]] = jsonlite::fromJSON(df[i, "datajson"], simplifyVector = FALSE)
+    }
+    return(ret)
+}
