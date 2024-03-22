@@ -234,7 +234,7 @@ function App() {
     
     //console.log("The response data is ", {appResult.histogram.rawdata})
   }
-
+  
   const getInputData = async () => {
     setIsLoadingInputData(true);
     fetch(`${backend_url}dosimulation/allinputdata`,{method: 'GET'})
@@ -250,12 +250,31 @@ function App() {
     })
     .catch(error => {
       console.error('getInputData error:', error);
+
       setIsLoadingInputData(false);
     });
     
     //console.log("The response data is ", {appResult.histogram.rawdata})
   }
 
+  useEffect(() => {
+    window.addEventListener('error', e => {
+        if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
+            const resizeObserverErrDiv = document.getElementById(
+                'webpack-dev-server-client-overlay-div'
+            );
+            const resizeObserverErr = document.getElementById(
+                'webpack-dev-server-client-overlay'
+            );
+            if (resizeObserverErr) {
+                resizeObserverErr.setAttribute('style', 'display: none');
+            }
+            if (resizeObserverErrDiv) {
+                resizeObserverErrDiv.setAttribute('style', 'display: none');
+            }
+        }
+    });
+}, []);
 
   const savedStatesOutput = [];
   for (let i=0; i<savedstates.length; i++) savedStatesOutput.push(
@@ -346,8 +365,7 @@ function App() {
           <h3>Demo 3: load input data from database and display it</h3>
           <PrimaryButton onClick={getInputData} disabled={isLoadingInputData} className="fetchInputDataButton">Load Input Data</PrimaryButton>
           {isLoadingInputData ? <Spinner label="Loading ..." /> :
-            /*<Pivot overflowBehavior="menu" overflowAriaLabel="more items">*/
-            <Pivot>
+            <Pivot overflowBehavior="menu" overflowAriaLabel="more items">
               {Object.keys(inputData).map(key => (
                 <PivotItem headerText={key} key={key}> 
                     <Datatable mykey={key} data={inputData[key]} /> 
