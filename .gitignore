@@ -3,3 +3,4 @@ frontend/node_modules/
 *.Renviron
 
 
+backend/assets/inputdata/inputdata.txt
